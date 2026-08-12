@@ -1,0 +1,49 @@
+APLICATIVO APRF - PASSO A PASSO
+
+ARQUIVO JÁ CONFIGURADO PARA O WEB APP ATUAL:
+https://script.google.com/macros/s/AKfycbvwXLcyt0cWCRC-DHsjn7Zbp70NI2ZorHlegWInXUX0E7ZAyEgXHsHf2b74_9kYhGYvMtg/exec
+
+IMPORTANTE:
+Se depois da publicação do Apps Script o endereço /exec mudar,
+abra o arquivo app-config.js e troque somente a URL entre aspas.
+
+1) ATUALIZE PRIMEIRO O SISTEMA APRF
+- Use os arquivos:
+  Index.html_V3.6_APLICATIVO_APRF.html
+  Code.gs_V3.6_APLICATIVO_APRF.txt
+- Substitua Index.html e Code.gs no Apps Script.
+- Salve.
+- Faça uma nova implantação/versão do Web App.
+
+2) PUBLIQUE ESTA PASTA COMO PWA EM UM ENDEREÇO HTTPS
+Sugestão simples: GitHub Pages.
+- Crie um repositório chamado aprf-app.
+- Envie TODOS os arquivos desta pasta para a raiz do repositório.
+- Em Settings > Pages, publique a branch main, pasta /(root).
+- Aguarde o endereço ficar disponível, exemplo:
+  https://SEUUSUARIO.github.io/aprf-app/
+
+3) CADASTRE O LINK DO APLICATIVO NO SISTEMA
+- Entre no ADMIN APRF.
+- Abra Configurações.
+- No campo "Link do Aplicativo APRF", cole o endereço do GitHub Pages.
+- Clique em Salvar configurações.
+
+4) TESTE NA ÁREA PÚBLICA
+- Abra o Web App.
+- Na tela de escolha do residencial aparecerá:
+  "INSTALAR APLICATIVO APRF"
+- Toque em Instalar.
+- O sistema abrirá a página instalável.
+- No Android/Chrome, use o aviso Instalar aplicativo.
+- No iPhone/iPad, Safari > Compartilhar > Adicionar à Tela de Início.
+
+5) DEPOIS DE INSTALADO
+- O ícone APRF ficará na tela inicial.
+- Ao tocar, abre o mesmo sistema.
+- O morador escolhe Flor da Mata ou Flor da Mata 2.
+- O cadeado 🔐 abre o login administrativo.
+- Quem não tem usuário/senha usa apenas a área pública.
+
+NÃO COLOQUE SENHAS, CHAVES PIX OU DADOS DE MORADORES NOS ARQUIVOS DO GITHUB.
+Esta pasta contém apenas o invólucro público do aplicativo e o endereço público do Web App.
