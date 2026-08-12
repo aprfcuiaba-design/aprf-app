@@ -8,13 +8,33 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="APRF">
   <title>APRF Associação</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="icon" href="icon-192.png">
+
+  <link rel="preconnect" href="https://script.google.com">
+  <link rel="preconnect" href="https://script.googleusercontent.com">
+  <link rel="dns-prefetch" href="//script.google.com">
+  <link rel="dns-prefetch" href="//script.googleusercontent.com">
+
+  <link rel="manifest" href="manifest.webmanifest?v=2">
+  <link rel="apple-touch-icon" href="apple-touch-icon-v2.png">
+  <link rel="icon" href="icon-192-v2.png">
+
   <style>
     *{box-sizing:border-box}
-    html,body{margin:0;width:100%;height:100%;font-family:Arial,sans-serif;background:#f4f7fb}
-    #appFrame{position:fixed;inset:0;width:100%;height:100%;border:0;background:#fff}
+    html,body{margin:0;width:100%;height:100%;font-family:Arial,sans-serif;background:#f4f7fb;overflow:hidden}
+    #appFrame{position:fixed;inset:0;width:100%;height:100%;border:0;background:#fff;visibility:hidden}
+    #splash{
+      position:fixed;inset:0;z-index:12000;background:#f4f7fb;
+      display:flex;align-items:center;justify-content:center;text-align:center;padding:24px
+    }
+    #splash img{width:112px;height:112px;border-radius:24px;box-shadow:0 6px 24px rgba(0,0,0,.14)}
+    #splash h1{font-size:22px;color:#0b4b94;margin:14px 0 5px}
+    #splash p{margin:0;color:#475467;font-size:14px}
+    .spinner{
+      width:32px;height:32px;border:4px solid #dce8f7;border-top-color:#1267c9;
+      border-radius:50%;margin:18px auto 0;animation:spin .8s linear infinite
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
     #installBox{
       position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;
       display:none;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;
@@ -27,7 +47,7 @@
     button{border:0;border-radius:10px;padding:12px 16px;background:#1267c9;color:#fff;font-weight:700;cursor:pointer}
     #closeInstall{background:#eef2f6;color:#344054;padding:8px 10px}
     #offline{
-      display:none;position:fixed;inset:0;z-index:10000;background:#f4f7fb;
+      display:none;position:fixed;inset:0;z-index:13000;background:#f4f7fb;
       align-items:center;justify-content:center;text-align:center;padding:30px
     }
     #offline img{width:96px;border-radius:22px;margin-bottom:16px}
@@ -36,14 +56,24 @@
       #installBox img{width:48px;height:48px}
       #installBtn{grid-column:1/-1;width:100%}
       #closeInstall{position:absolute;right:8px;top:8px}
+      #splash img{width:96px;height:96px}
     }
   </style>
 </head>
 <body>
-  <iframe id="appFrame" title="Sistema APRF" allow="clipboard-read; clipboard-write"></iframe>
+  <div id="splash">
+    <div>
+      <img src="icon-192-v2.png" alt="APRF">
+      <h1>APRF Associação</h1>
+      <p>Abrindo o sistema...</p>
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <iframe id="appFrame" title="Sistema APRF" allow="clipboard-read; clipboard-write" loading="eager"></iframe>
 
   <div id="installBox">
-    <img src="icon-192.png" alt="APRF">
+    <img src="icon-192-v2.png" alt="APRF">
     <div>
       <strong>Instalar Aplicativo APRF</strong>
       <small>Tenha os serviços da associação na tela inicial do celular.</small>
@@ -54,17 +84,33 @@
 
   <div id="offline">
     <div>
-      <img src="icon-192.png" alt="APRF">
+      <img src="icon-192-v2.png" alt="APRF">
       <h2>Sem conexão com a internet</h2>
       <p>Conecte-se à internet para acessar o Sistema APRF.</p>
       <button onclick="location.reload()">Tentar novamente</button>
     </div>
   </div>
 
-  <script src="app-config.js"></script>
+  <script src="app-config.js?v=2"></script>
   <script>
+    const frame=document.getElementById('appFrame');
+    const splash=document.getElementById('splash');
     const sep=APRF_WEB_APP_URL.includes('?')?'&':'?';
-    document.getElementById('appFrame').src=APRF_WEB_APP_URL+sep+'pwa=1';
+    frame.src=APRF_WEB_APP_URL+sep+'pwa=1';
+
+    frame.addEventListener('load',()=>{
+      frame.style.visibility='visible';
+      splash.style.display='none';
+    });
+
+    // Segurança visual: se o Apps Script demorar muito, continuamos mostrando
+    // a tela APRF em vez de uma tela branca.
+    setTimeout(()=>{
+      if(frame.style.visibility!=='visible'){
+        const p=splash.querySelector('p');
+        if(p)p.textContent='Conectando ao Sistema APRF...';
+      }
+    },3500);
 
     let deferredPrompt=null;
     const installBox=document.getElementById('installBox');
@@ -87,7 +133,6 @@
         installBox.style.display='none';
         return;
       }
-
       const isiOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
       if(isiOS){
         alert('No iPhone/iPad: toque no botão Compartilhar do Safari e escolha “Adicionar à Tela de Início”.');
@@ -99,7 +144,7 @@
     document.getElementById('closeInstall').addEventListener('click',()=>installBox.style.display='none');
 
     if('serviceWorker' in navigator){
-      window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+      window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2').catch(()=>{}));
     }
 
     function updateOnline(){
