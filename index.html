@@ -8,113 +8,102 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="APRF">
   <title>APRF Associação</title>
-
-  <link rel="preconnect" href="https://script.google.com">
-  <link rel="preconnect" href="https://script.googleusercontent.com">
-  <link rel="dns-prefetch" href="//script.google.com">
-  <link rel="dns-prefetch" href="//script.googleusercontent.com">
-
-  <link rel="manifest" href="manifest.webmanifest?v=2">
-  <link rel="apple-touch-icon" href="apple-touch-icon-v2.png">
-  <link rel="icon" href="icon-192-v2.png">
-
+  <link rel="manifest" href="manifest.webmanifest?v=4">
+  <link rel="apple-touch-icon" href="apple-touch-icon-v4.png">
+  <link rel="icon" href="icon-192-v4.png">
   <style>
     *{box-sizing:border-box}
-    html,body{margin:0;width:100%;height:100%;font-family:Arial,sans-serif;background:#f4f7fb;overflow:hidden}
-    #appFrame{position:fixed;inset:0;width:100%;height:100%;border:0;background:#fff;visibility:hidden}
-    #splash{
-      position:fixed;inset:0;z-index:12000;background:#f4f7fb;
-      display:flex;align-items:center;justify-content:center;text-align:center;padding:24px
-    }
-    #splash img{width:112px;height:112px;border-radius:24px;box-shadow:0 6px 24px rgba(0,0,0,.14)}
-    #splash h1{font-size:22px;color:#0b4b94;margin:14px 0 5px}
-    #splash p{margin:0;color:#475467;font-size:14px}
-    .spinner{
-      width:32px;height:32px;border:4px solid #dce8f7;border-top-color:#1267c9;
-      border-radius:50%;margin:18px auto 0;animation:spin .8s linear infinite
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-
+    html,body{margin:0;width:100%;height:100%;font-family:Arial,sans-serif;background:#f4f7fb}
+    #appFrame{position:fixed;inset:0;width:100%;height:100%;border:0;background:#fff}
     #installBox{
       position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;
-      display:none;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;
-      max-width:720px;margin:auto;padding:12px 14px;background:#fff;border:1px solid #c7d7eb;
-      border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.18)
+      display:none;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;
+      max-width:760px;margin:auto;padding:14px 16px;background:#fff;border:2px solid #b9d4f7;
+      border-radius:18px;box-shadow:0 8px 30px rgba(0,0,0,.18)
     }
-    #installBox img{width:54px;height:54px;border-radius:12px}
-    #installBox strong{display:block;color:#06428a;font-size:17px}
-    #installBox small{display:block;margin-top:3px;color:#475467}
+    #installBox img{width:64px;height:64px;border-radius:16px}
+    #installBox strong{display:block;color:#06428a;font-size:18px}
+    #installBox small{display:block;margin-top:4px;color:#475467;font-size:14px}
     button{border:0;border-radius:10px;padding:12px 16px;background:#1267c9;color:#fff;font-weight:700;cursor:pointer}
     #closeInstall{background:#eef2f6;color:#344054;padding:8px 10px}
     #offline{
-      display:none;position:fixed;inset:0;z-index:13000;background:#f4f7fb;
+      display:none;position:fixed;inset:0;z-index:10000;background:#f4f7fb;
       align-items:center;justify-content:center;text-align:center;padding:30px
     }
-    #offline img{width:96px;border-radius:22px;margin-bottom:16px}
+    #offline img{width:104px;border-radius:24px;margin-bottom:16px}
+
+    /* Orientação simples para idosos e usuários que não acharem o ícone */
+    #installedGuide{
+      position:fixed;inset:0;z-index:20000;background:rgba(7,24,47,.70);
+      display:none;align-items:center;justify-content:center;padding:18px
+    }
+    .guideCard{
+      width:min(520px,100%);background:#fff;border-radius:22px;padding:24px;text-align:center;
+      border:3px solid #d8e8ff;box-shadow:0 18px 60px rgba(0,0,0,.28)
+    }
+    .guideCard img{width:112px;height:112px;border-radius:25px;margin:4px auto 12px}
+    .guideCheck{font-size:44px;line-height:1}
+    .guideCard h2{color:#0b4b94;margin:10px 0 8px;font-size:25px}
+    .guideCard p{font-size:18px;line-height:1.45;color:#344054;margin:8px 0}
+    .guideTip{background:#eef6ff;border:1px solid #b9d4f7;border-radius:12px;padding:12px;margin-top:14px}
+    .guideCard button{width:100%;margin-top:16px;font-size:18px;padding:14px}
+
     @media(max-width:620px){
-      #installBox{grid-template-columns:48px 1fr}
-      #installBox img{width:48px;height:48px}
-      #installBtn{grid-column:1/-1;width:100%}
+      #installBox{grid-template-columns:58px 1fr;padding:12px}
+      #installBox img{width:58px;height:58px}
+      #installBtn{grid-column:1/-1;width:100%;font-size:18px}
       #closeInstall{position:absolute;right:8px;top:8px}
-      #splash img{width:96px;height:96px}
+      .guideCard{padding:20px 16px}
+      .guideCard h2{font-size:23px}
+      .guideCard p{font-size:17px}
     }
   </style>
 </head>
 <body>
-  <div id="splash">
-    <div>
-      <img src="icon-192-v2.png" alt="APRF">
-      <h1>APRF Associação</h1>
-      <p>Abrindo o sistema...</p>
-      <div class="spinner"></div>
-    </div>
-  </div>
-
-  <iframe id="appFrame" title="Sistema APRF" allow="clipboard-read; clipboard-write" loading="eager"></iframe>
+  <iframe id="appFrame" title="Sistema APRF" allow="clipboard-read; clipboard-write"></iframe>
 
   <div id="installBox">
-    <img src="icon-192-v2.png" alt="APRF">
+    <img src="icon-192-v4.png" alt="APRF">
     <div>
       <strong>Instalar Aplicativo APRF</strong>
-      <small>Tenha os serviços da associação na tela inicial do celular.</small>
+      <small>Tenha os serviços da associação na tela do seu celular.</small>
     </div>
     <button id="installBtn">Instalar</button>
     <button id="closeInstall" aria-label="Fechar">✕</button>
   </div>
 
+  <div id="installedGuide" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+    <div class="guideCard">
+      <div class="guideCheck">✅</div>
+      <h2 id="guideTitle">Aplicativo APRF instalado!</h2>
+      <img src="icon-192-v4.png" alt="Ícone do aplicativo APRF">
+      <p>Procure este ícone <b>APRF</b> na tela inicial ou na lista de aplicativos do seu celular.</p>
+      <div class="guideTip">
+        <b>Não encontrou?</b><br>
+        Abra a lista de aplicativos e pesquise por <b>APRF</b>.
+      </div>
+      <button id="closeGuide">Entendi</button>
+    </div>
+  </div>
+
   <div id="offline">
     <div>
-      <img src="icon-192-v2.png" alt="APRF">
+      <img src="icon-192-v4.png" alt="APRF">
       <h2>Sem conexão com a internet</h2>
       <p>Conecte-se à internet para acessar o Sistema APRF.</p>
       <button onclick="location.reload()">Tentar novamente</button>
     </div>
   </div>
 
-  <script src="app-config.js?v=2"></script>
+  <script src="app-config.js"></script>
   <script>
-    const frame=document.getElementById('appFrame');
-    const splash=document.getElementById('splash');
     const sep=APRF_WEB_APP_URL.includes('?')?'&':'?';
-    frame.src=APRF_WEB_APP_URL+sep+'pwa=1';
-
-    frame.addEventListener('load',()=>{
-      frame.style.visibility='visible';
-      splash.style.display='none';
-    });
-
-    // Segurança visual: se o Apps Script demorar muito, continuamos mostrando
-    // a tela APRF em vez de uma tela branca.
-    setTimeout(()=>{
-      if(frame.style.visibility!=='visible'){
-        const p=splash.querySelector('p');
-        if(p)p.textContent='Conectando ao Sistema APRF...';
-      }
-    },3500);
+    document.getElementById('appFrame').src=APRF_WEB_APP_URL+sep+'pwa=1';
 
     let deferredPrompt=null;
     const installBox=document.getElementById('installBox');
     const installBtn=document.getElementById('installBtn');
+    const installedGuide=document.getElementById('installedGuide');
 
     const isStandalone=window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
     if(!isStandalone){
@@ -128,23 +117,33 @@
     installBtn.addEventListener('click',async()=>{
       if(deferredPrompt){
         deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
+        const choice=await deferredPrompt.userChoice;
+        if(choice && choice.outcome==='accepted'){
+          installBtn.textContent='Instalando...';
+        }
         deferredPrompt=null;
-        installBox.style.display='none';
         return;
       }
+
       const isiOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
       if(isiOS){
-        alert('No iPhone/iPad: toque no botão Compartilhar do Safari e escolha “Adicionar à Tela de Início”.');
+        alert('No iPhone/iPad: toque em Compartilhar e depois em “Adicionar à Tela de Início”.');
       }else{
-        alert('No navegador, abra o menu e escolha “Instalar aplicativo” ou “Adicionar à tela inicial”.');
+        alert('Abra o menu do navegador e escolha “Instalar aplicativo” ou “Adicionar à tela inicial”.');
       }
     });
 
+    // Quando o navegador confirma a instalação, mostramos uma orientação grande.
+    window.addEventListener('appinstalled',()=>{
+      installBox.style.display='none';
+      installedGuide.style.display='flex';
+    });
+
+    document.getElementById('closeGuide').addEventListener('click',()=>installedGuide.style.display='none');
     document.getElementById('closeInstall').addEventListener('click',()=>installBox.style.display='none');
 
     if('serviceWorker' in navigator){
-      window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=2').catch(()=>{}));
+      window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
     }
 
     function updateOnline(){
