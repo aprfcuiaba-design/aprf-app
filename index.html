@@ -57,9 +57,39 @@
       .guideCard h2{font-size:23px}
       .guideCard p{font-size:17px}
     }
+
+    #startupSplash{
+      position:fixed;inset:0;z-index:30000;background:#083f86;
+      display:flex;align-items:center;justify-content:center;text-align:center;
+      transition:opacity .22s ease;
+    }
+    #startupSplash.hide{opacity:0;pointer-events:none}
+    .startupInner{padding:24px;color:#fff}
+    .startupInner img{width:132px;height:132px;border-radius:28px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);margin-bottom:16px}
+    .startupInner strong{display:block;font-size:26px;letter-spacing:.02em}
+    .startupInner span{display:block;margin-top:8px;font-size:17px;opacity:.94}
+    .startupDots{display:flex;justify-content:center;gap:8px;margin-top:18px}
+    .startupDots i{width:9px;height:9px;border-radius:50%;background:#fff;
+      animation:aprfPulse 1.1s infinite ease-in-out}
+    .startupDots i:nth-child(2){animation-delay:.18s}
+    .startupDots i:nth-child(3){animation-delay:.36s}
+    @keyframes aprfPulse{
+      0%,100%{opacity:.28;transform:scale(.85)}
+      50%{opacity:1;transform:scale(1.15)}
+    }
   </style>
 </head>
 <body>
+
+  <div id="startupSplash" aria-label="Carregando aplicativo APRF">
+    <div class="startupInner">
+      <img src="icon-192-v4.png" alt="APRF">
+      <strong>APRF</strong>
+      <span>Carregando aplicativo...</span>
+      <div class="startupDots"><i></i><i></i><i></i></div>
+    </div>
+  </div>
   <iframe id="appFrame" title="Sistema APRF" allow="clipboard-read; clipboard-write"></iframe>
 
   <div id="installBox">
@@ -99,6 +129,18 @@
   <script>
     const sep=APRF_WEB_APP_URL.includes('?')?'&':'?';
     document.getElementById('appFrame').src=APRF_WEB_APP_URL+sep+'pwa=1';
+
+    const startupSplash=document.getElementById('startupSplash');
+    function hideStartupSplash(){
+      if(!startupSplash)return;
+      startupSplash.classList.add('hide');
+      setTimeout(()=>{startupSplash.style.display='none';},260);
+    }
+    document.getElementById('appFrame').addEventListener('load',()=>{
+      setTimeout(hideStartupSplash,500);
+    });
+    setTimeout(hideStartupSplash,9000);
+
 
     let deferredPrompt=null;
     const installBox=document.getElementById('installBox');
