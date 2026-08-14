@@ -130,14 +130,13 @@
     const sep=APRF_WEB_APP_URL.includes('?')?'&':'?';
     document.getElementById('appFrame').src=APRF_WEB_APP_URL+sep+'pwa=1';
 
-    // APRF - histórico real no nível do aplicativo PWA.
-    // O botão/gesto Voltar do Android atua neste documento (GitHub Pages),
-    // não diretamente dentro do iframe do Apps Script.
-    const aprfFrame=document.getElementById('appFrame');
+    // APRF - botão/gesto Voltar do Android.
+    // Guarda o WindowProxy exato do Apps Script que enviou a navegação.
+    let aprfNavSource=null;
     let aprfNavReady=false;
     let aprfNavLock=false;
 
-    function normalizarEstadoAPRF(d){
+    function estadoNav(d){
       return {
         aprf:true,
         tela:String(d.tela||'publicHome'),
@@ -148,16 +147,20 @@
 
     window.addEventListener('message',e=>{
       const d=e.data||{};
-      if(d.type!=='APRF_NAV_STATE') return;
+      if(d.type!=='APRF_NAV_STATE')return;
 
-      const st=normalizarEstadoAPRF(d);
+      // IMPORTANTE: e.source é o frame interno real do Apps Script,
+      // mesmo quando há iframe intermediário do Google.
+      aprfNavSource=e.source;
+
+      if(aprfNavLock)return;
+
+      const st=estadoNav(d);
       const atual=history.state||{};
       const igual=atual.aprf &&
         atual.tela===st.tela &&
         (atual.bairro||'')===st.bairro &&
         (atual.service||'')===st.service;
-
-      if(aprfNavLock) return;
 
       try{
         if(!aprfNavReady){
@@ -171,21 +174,22 @@
 
     window.addEventListener('popstate',e=>{
       const st=e.state;
-      if(!st || !st.aprf){
-        // Quando não houver mais estado interno, deixa o Android sair normalmente.
-        return;
-      }
+
+      // Se acabou o histórico APRF, o Android pode sair normalmente.
+      if(!st || !st.aprf)return;
 
       aprfNavLock=true;
       try{
-        aprfFrame.contentWindow.postMessage({
-          type:'APRF_NAV_RESTORE',
-          tela:st.tela||'publicHome',
-          bairro:st.bairro||'',
-          service:st.service||''
-        }, '*');
+        if(aprfNavSource){
+          aprfNavSource.postMessage({
+            type:'APRF_NAV_RESTORE',
+            tela:st.tela||'publicHome',
+            bairro:st.bairro||'',
+            service:st.service||''
+          },'*');
+        }
       }catch(err){}
-      setTimeout(()=>{aprfNavLock=false;},180);
+      setTimeout(()=>{aprfNavLock=false;},220);
     });
 
 
