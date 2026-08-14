@@ -130,6 +130,65 @@
     const sep=APRF_WEB_APP_URL.includes('?')?'&':'?';
     document.getElementById('appFrame').src=APRF_WEB_APP_URL+sep+'pwa=1';
 
+    // APRF - histórico real no nível do aplicativo PWA.
+    // O botão/gesto Voltar do Android atua neste documento (GitHub Pages),
+    // não diretamente dentro do iframe do Apps Script.
+    const aprfFrame=document.getElementById('appFrame');
+    let aprfNavReady=false;
+    let aprfNavLock=false;
+
+    function normalizarEstadoAPRF(d){
+      return {
+        aprf:true,
+        tela:String(d.tela||'publicHome'),
+        bairro:String(d.bairro||''),
+        service:String(d.service||'')
+      };
+    }
+
+    window.addEventListener('message',e=>{
+      const d=e.data||{};
+      if(d.type!=='APRF_NAV_STATE') return;
+
+      const st=normalizarEstadoAPRF(d);
+      const atual=history.state||{};
+      const igual=atual.aprf &&
+        atual.tela===st.tela &&
+        (atual.bairro||'')===st.bairro &&
+        (atual.service||'')===st.service;
+
+      if(aprfNavLock) return;
+
+      try{
+        if(!aprfNavReady){
+          history.replaceState(st,'');
+          aprfNavReady=true;
+        }else if(!igual){
+          history.pushState(st,'');
+        }
+      }catch(err){}
+    });
+
+    window.addEventListener('popstate',e=>{
+      const st=e.state;
+      if(!st || !st.aprf){
+        // Quando não houver mais estado interno, deixa o Android sair normalmente.
+        return;
+      }
+
+      aprfNavLock=true;
+      try{
+        aprfFrame.contentWindow.postMessage({
+          type:'APRF_NAV_RESTORE',
+          tela:st.tela||'publicHome',
+          bairro:st.bairro||'',
+          service:st.service||''
+        }, '*');
+      }catch(err){}
+      setTimeout(()=>{aprfNavLock=false;},180);
+    });
+
+
     const startupSplash=document.getElementById('startupSplash');
     function hideStartupSplash(){
       if(!startupSplash)return;
